@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/STYLE/index.css">
+    <title>BOTÃO GINCANA</title>
+</head>
+<body>
+
+  <!-- SETUP SCREEN -->
+  <div id="setup-screen">
+    <h1>BATATA QUENTE</h1>
+    <div class="input-group tema-input-group">
+      <label for="tema-input">Tema da Rodada</label>
+      <input type="text" id="tema-input" placeholder="Ex: Filmes, Anos 80, Esportes..." maxlength="60">
+    </div>
+    <div class="setup-inputs">
+      <div class="input-group">
+        <label for="team1-input">Time 1</label>
+        <input type="text" id="team1-input" placeholder="Nome do Time 1" maxlength="20">
+      </div>
+      <div class="input-group">
+        <label for="team2-input">Time 2</label>
+        <input type="text" id="team2-input" placeholder="Nome do Time 2" maxlength="20">
+      </div>
+    </div>
+    <button id="start-game-btn">Iniciar Jogo</button>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game-screen" class="hidden">
+    <h1>BATATA QUENTE</h1>
+    <div id="tema-banner" class="hidden">
+      <span id="tema-label">TEMA</span>
+      <span id="display-tema"></span>
+    </div>
+    <div class="scoreboard">
+
+      <div class="team-card" id="team1-card">
+        <span class="team-name" id="display-team1">Time 1</span>
+      </div>
+
+      <div class="center-area">
+        <span id="turn-label">VEZ DO TIME 1</span>
+        <span id="timer">10</span>
+        <button id="center-btn">BOTÃO!</button>
+        <button id="start-round-btn">&#9654; INICIAR RODADA</button>
+      </div>
+
+      <div class="team-card" id="team2-card">
+        <span class="team-name" id="display-team2">Time 2</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RESULT OVERLAY -->
+  <div id="result-overlay" class="hidden">
+    <div id="result-box">
+      <span id="result-title">FIM!</span>
+      <span id="result-msg"></span>
+      <span id="result-sub">Voltando ao início...</span>
+    </div>
+  </div>
+
+  <script src="/SCRIPT/script.js"></script>
+
+</body>
+</html>

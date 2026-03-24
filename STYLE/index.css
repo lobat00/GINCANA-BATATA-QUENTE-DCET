@@ -1,0 +1,552 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a2e;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.hidden { display: none !important; }
+
+/* ── SETUP SCREEN ────────────────────────────────────────── */
+#setup-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  text-align: center;
+}
+
+#setup-screen h1 {
+  color: #e0e0e0;
+  font-size: 2.4rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.setup-inputs {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  color: #a0a0c0;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.input-group input {
+  padding: 14px 20px;
+  font-size: 1.1rem;
+  background: #16213e;
+  color: #e0e0e0;
+  border: 2px solid #0f3460;
+  border-radius: 10px;
+  outline: none;
+  text-align: center;
+  transition: border-color 0.3s;
+  width: 220px;
+}
+
+.input-group input:focus {
+  border-color: #e94560;
+}
+
+#start-game-btn {
+  padding: 16px 52px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: #e94560;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: background 0.3s, transform 0.1s;
+}
+
+#start-game-btn:hover {
+  background: #c73652;
+  transform: scale(1.05);
+
+/* ── Tema input (wider, on top) ──────────────────────────── */
+.tema-input-group {
+  width: 100%;
+  max-width: 460px;
+}
+
+.tema-input-group input {
+  width: 100%;
+  font-size: 1.15rem;
+  letter-spacing: 1px;
+}
+}
+
+/* ── GAME SCREEN ─────────────────────────────────────────── */
+#game-screen {
+
+  /* ── Tema banner ─────────────────────────────────────────── */
+  #tema-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #0f3460, #16213e);
+    border: 2px solid #e94560;
+    border-radius: 12px;
+    padding: 12px 40px;
+    text-align: center;
+  }
+
+  #tema-label {
+    color: #e94560;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  #display-tema {
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+#game-screen h1 {
+  color: #e0e0e0;
+  font-size: 1.8rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.scoreboard {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── Team cards ──────────────────────────────────────────── */
+.team-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: #16213e;
+  border: 3px solid #0f3460;
+  border-radius: 16px;
+  padding: 28px 36px;
+  min-width: 180px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.team-card.active {
+  border-color: #e94560;
+  box-shadow: 0 0 24px rgba(233, 69, 96, 0.5);
+}
+
+.team-name {
+  color: #a0c4ff;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.score {
+  font-size: 5rem;
+  font-weight: 700;
+  color: #e0e0e0;
+  line-height: 1;
+}
+
+.score.flash {
+  animation: flashScore 0.4s ease-out forwards;
+}
+
+@keyframes flashScore {
+  0%   { transform: scale(1.6); color: #e94560; }
+  100% { transform: scale(1);   color: #e0e0e0; }
+}
+
+/* ── Center area ─────────────────────────────────────────── */
+.center-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+#turn-label {
+  color: #a0c4ff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+#timer {
+  font-size: 5rem;
+  font-weight: 700;
+  color: #e0e0e0;
+  letter-spacing: 4px;
+  background: #16213e;
+  padding: 18px 32px;
+  border-radius: 16px;
+  border: 3px solid #0f3460;
+  min-width: 140px;
+  text-align: center;
+  transition: color 0.3s, border-color 0.3s;
+}
+
+#timer.danger {
+  color: #e94560;
+  border-color: #e94560;
+  animation: pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from { transform: scale(1); }
+  to   { transform: scale(1.07); }
+}
+
+/* ── Center big button ───────────────────────────────────── */
+#center-btn {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  background: radial-gradient(circle at 40% 35%, #ff6b81, #e94560 60%, #a0001e);
+  color: #fff;
+  border: 5px solid #fff2;
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(233, 69, 96, 0.6), 0 2px 0 #7a001a inset;
+  transition: transform 0.1s, box-shadow 0.1s;
+  text-transform: uppercase;
+}
+
+#center-btn:hover:not(:disabled) {
+  transform: scale(1.07);
+  box-shadow: 0 12px 40px rgba(233, 69, 96, 0.8), 0 2px 0 #7a001a inset;
+}
+
+#center-btn:active:not(:disabled) {
+  transform: scale(0.94);
+  box-shadow: 0 4px 16px rgba(233, 69, 96, 0.5), 0 2px 0 #7a001a inset;
+}
+
+#center-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+#center-btn.flash {
+  animation: btnFlash 0.3s ease-out forwards;
+}
+
+@keyframes btnFlash {
+  0%   { transform: scale(1.2); filter: brightness(1.5); }
+  100% { transform: scale(1);   filter: brightness(1); }
+}
+
+/* ── Start Round button ──────────────────────────────────── */
+#start-round-btn {
+  padding: 14px 36px;
+  font-size: 1rem;
+  font-weight: 700;
+  background: #0f3460;
+  color: #e0e0e0;
+  border: 2px solid #a0c4ff;
+  border-radius: 10px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: background 0.2s, transform 0.1s;
+}
+
+#start-round-btn:hover {
+  background: #1a4a8a;
+  transform: scale(1.05);
+}
+
+#start-round-btn:active {
+  transform: scale(0.97);
+}
+
+/* ── Result overlay ──────────────────────────────────────── */
+#result-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 25, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+#result-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+#result-title {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #e94560;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+#result-msg {
+  font-size: 1.4rem;
+  color: #e0e0e0;
+  font-weight: 600;
+}
+
+#result-sub {
+  font-size: 0.85rem;
+  color: #666;
+  letter-spacing: 2px;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a2e;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.hidden { display: none !important; }
+
+/* ── SETUP SCREEN ────────────────────────────────────────── */
+#setup-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  text-align: center;
+}
+
+#setup-screen h1 {
+  color: #e0e0e0;
+  font-size: 2.4rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.setup-inputs {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  color: #a0a0c0;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.input-group input {
+  padding: 14px 20px;
+  font-size: 1.1rem;
+  background: #16213e;
+  color: #e0e0e0;
+  border: 2px solid #0f3460;
+  border-radius: 10px;
+  outline: none;
+  text-align: center;
+  transition: border-color 0.3s;
+  width: 220px;
+}
+
+.input-group input:focus {
+  border-color: #e94560;
+}
+
+#start-game-btn {
+  padding: 16px 52px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: #e94560;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: background 0.3s, transform 0.1s;
+}
+
+#start-game-btn:hover {
+  background: #c73652;
+  transform: scale(1.05);
+}
+
+/* ── GAME SCREEN ─────────────────────────────────────────── */
+#game-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+#game-screen h1 {
+  color: #e0e0e0;
+  font-size: 1.8rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.scoreboard {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── Team cards ──────────────────────────────────────────── */
+.team-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  background: #16213e;
+  border: 2px solid #0f3460;
+  border-radius: 16px;
+  padding: 28px 36px;
+  min-width: 200px;
+}
+
+.team-name {
+  color: #a0c4ff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.score {
+  font-size: 5rem;
+  font-weight: 700;
+  color: #e0e0e0;
+  line-height: 1;
+}
+
+.score.flash {
+  animation: flashScore 0.35s ease-out forwards;
+}
+
+@keyframes flashScore {
+  0%   { transform: scale(1.5); color: #e94560; }
+  100% { transform: scale(1);   color: #e0e0e0; }
+}
+
+.score-btn {
+  padding: 14px 0;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 700;
+  background: #0f3460;
+  color: #e0e0e0;
+  border: 2px solid #e94560;
+  border-radius: 10px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.score-btn:hover:not(:disabled) {
+  background: #e94560;
+  transform: scale(1.05);
+}
+
+.score-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.score-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ── Timer ───────────────────────────────────────────────── */
+.timer-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#timer {
+  font-size: 5rem;
+  font-weight: 700;
+  color: #e0e0e0;
+  letter-spacing: 6px;
+  background: #16213e;
+  padding: 22px 36px;
+  border-radius: 16px;
+  border: 3px solid #0f3460;
+  min-width: 210px;
+  text-align: center;
+  transition: color 0.4s, border-color 0.4s;
+}
+
+#timer.finished {
+  color: #e94560;
+  border-color: #e94560;
+  animation: pulse 0.55s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from { transform: scale(1); }
+  to   { transform: scale(1.06); }
+}
