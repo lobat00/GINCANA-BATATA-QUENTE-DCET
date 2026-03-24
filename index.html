@@ -11,18 +11,46 @@
   <!-- SETUP SCREEN -->
   <div id="setup-screen">
     <h1>BATATA QUENTE</h1>
-    <div class="input-group tema-input-group">
-      <label for="tema-input">Tema da Rodada</label>
-      <input type="text" id="tema-input" placeholder="Ex: Filmes, Anos 80, Esportes..." maxlength="60">
+
+    <div class="theme-manager">
+      <span class="theme-title">SORTEIO DE TEMAS</span>
+      <div class="theme-controls">
+        <input type="text" id="theme-add-input" placeholder="Digite um tema e clique em Adicionar" maxlength="60">
+        <button id="add-theme-btn" type="button">Adicionar Tema</button>
+        <button id="clear-themes-btn" type="button">Limpar</button>
+      </div>
+      <span id="themes-count">Temas cadastrados: 0</span>
+      <div id="themes-preview" class="themes-preview"></div>
     </div>
+
     <div class="setup-inputs">
       <div class="input-group">
         <label for="team1-input">Time 1</label>
-        <input type="text" id="team1-input" placeholder="Nome do Time 1" maxlength="20">
+        <input type="text" id="team1-input" placeholder="Arquitetura" maxlength="20" value="Arquitetura">
       </div>
       <div class="input-group">
         <label for="team2-input">Time 2</label>
-        <input type="text" id="team2-input" placeholder="Nome do Time 2" maxlength="20">
+        <input type="text" id="team2-input" placeholder="Civil" maxlength="20" value="Civil">
+      </div>
+      <div class="input-group">
+        <label for="team3-input">Time 3</label>
+        <input type="text" id="team3-input" placeholder="Computação" maxlength="20" value="Computação">
+      </div>
+      <div class="input-group">
+        <label for="team4-input">Time 4</label>
+        <input type="text" id="team4-input" placeholder="Elétrica" maxlength="20" value="Elétrica">
+      </div>
+      <div class="input-group">
+        <label for="team5-input">Time 5</label>
+        <input type="text" id="team5-input" placeholder="Física" maxlength="20" value="Física">
+      </div>
+      <div class="input-group">
+        <label for="team6-input">Time 6</label>
+        <input type="text" id="team6-input" placeholder="Matemática" maxlength="20" value="Matemática">
+      </div>
+      <div class="input-group">
+        <label for="team7-input">Time 7</label>
+        <input type="text" id="team7-input" placeholder="Química" maxlength="20" value="Química">
       </div>
     </div>
     <button id="start-game-btn">Iniciar Jogo</button>
@@ -35,23 +63,42 @@
       <span id="tema-label">TEMA</span>
       <span id="display-tema"></span>
     </div>
-    <div class="scoreboard">
+    <div class="center-area">
+      <span id="turn-label">VEZ DO TIME 1</span>
+      <span id="timer">10</span>
+      <button id="center-btn">BOTÃO!</button>
+      <button id="start-round-btn">&#9654; INICIAR RODADA</button>
+    </div>
 
+    <div class="teams-grid">
       <div class="team-card" id="team1-card">
         <span class="team-name" id="display-team1">Time 1</span>
+        <span class="team-lives" id="lives1">Vidas: 1</span>
       </div>
-
-      <div class="center-area">
-        <span id="turn-label">VEZ DO TIME 1</span>
-        <span id="timer">10</span>
-        <button id="center-btn">BOTÃO!</button>
-        <button id="start-round-btn">&#9654; INICIAR RODADA</button>
-      </div>
-
       <div class="team-card" id="team2-card">
         <span class="team-name" id="display-team2">Time 2</span>
+        <span class="team-lives" id="lives2">Vidas: 1</span>
       </div>
-
+      <div class="team-card" id="team3-card">
+        <span class="team-name" id="display-team3">Time 3</span>
+        <span class="team-lives" id="lives3">Vidas: 1</span>
+      </div>
+      <div class="team-card" id="team4-card">
+        <span class="team-name" id="display-team4">Time 4</span>
+        <span class="team-lives" id="lives4">Vidas: 1</span>
+      </div>
+      <div class="team-card" id="team5-card">
+        <span class="team-name" id="display-team5">Time 5</span>
+        <span class="team-lives" id="lives5">Vidas: 1</span>
+      </div>
+      <div class="team-card" id="team6-card">
+        <span class="team-name" id="display-team6">Time 6</span>
+        <span class="team-lives" id="lives6">Vidas: 1</span>
+      </div>
+      <div class="team-card" id="team7-card">
+        <span class="team-name" id="display-team7">Time 7</span>
+        <span class="team-lives" id="lives7">Vidas: 1</span>
+      </div>
     </div>
   </div>
 

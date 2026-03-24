@@ -1,28 +1,82 @@
 // ── Elements ──────────────────────────────────────────────
-const setupScreen   = document.getElementById("setup-screen");
-const gameScreen    = document.getElementById("game-screen");
+const setupScreen = document.getElementById("setup-screen");
+const gameScreen = document.getElementById("game-screen");
 const resultOverlay = document.getElementById("result-overlay");
-const temaInput     = document.getElementById("tema-input");
-const team1Input    = document.getElementById("team1-input");
-const team2Input    = document.getElementById("team2-input");
-const startGameBtn  = document.getElementById("start-game-btn");
-const timerDisplay  = document.getElementById("timer");
-const turnLabel     = document.getElementById("turn-label");
-const temaBanner    = document.getElementById("tema-banner");
-const displayTema   = document.getElementById("display-tema");
-const displayTeam1  = document.getElementById("display-team1");
-const displayTeam2  = document.getElementById("display-team2");
-const team1Card     = document.getElementById("team1-card");
-const team2Card     = document.getElementById("team2-card");
-const centerBtn     = document.getElementById("center-btn");
+
+const startGameBtn = document.getElementById("start-game-btn");
+const timerDisplay = document.getElementById("timer");
+const turnLabel = document.getElementById("turn-label");
+const temaBanner = document.getElementById("tema-banner");
+const displayTema = document.getElementById("display-tema");
+const centerBtn = document.getElementById("center-btn");
 const startRoundBtn = document.getElementById("start-round-btn");
-const resultMsg     = document.getElementById("result-msg");
+
+const resultTitle = document.getElementById("result-title");
+const resultMsg = document.getElementById("result-msg");
+
+const themeAddInput = document.getElementById("theme-add-input");
+const addThemeBtn = document.getElementById("add-theme-btn");
+const clearThemesBtn = document.getElementById("clear-themes-btn");
+const themesPreview = document.getElementById("themes-preview");
+const themesCount = document.getElementById("themes-count");
+
+const teamInputs = Array.from({ length: 7 }, (_, i) => document.getElementById(`team${i + 1}-input`));
+const teamCards = Array.from({ length: 7 }, (_, i) => document.getElementById(`team${i + 1}-card`));
+const teamNameEls = Array.from({ length: 7 }, (_, i) => document.getElementById(`display-team${i + 1}`));
+const teamLivesEls = Array.from({ length: 7 }, (_, i) => document.getElementById(`lives${i + 1}`));
 
 // ── State ─────────────────────────────────────────────────
-let currentTeam    = 1;
-let seconds        = 10;
-let interval       = null;
+const TEAM_COUNT = 7;
+const INITIAL_LIVES = 1;
+const TURN_SECONDS = 10;
+
+const DEFAULT_TEAM_NAMES = [
+  "Arquitetura",
+  "Civil",
+  "Computação",
+  "Elétrica",
+  "Física",
+  "Matemática",
+  "Química"
+];
+
+const TEAM_COLORS = {
+  "arquitetura": "team-red",
+  "civil":       "team-green",
+  "computação":  "team-purple",
+  "elétrica":    "team-yellow",
+  "física":      "team-orange",
+  "matemática":  "team-black",
+  "química":     "team-blue"
+};
+
+function getTeamColorClass(name) {
+  return TEAM_COLORS[name.toLowerCase().trim()] || "";
+}
+
+let teams = [];
+let currentTeamIndex = 0;
+let seconds = TURN_SECONDS;
+let interval = null;
 let waitingToStart = true;
+
+let themes = [
+  "Partes do corpo humano",
+  "Utensílios de cozinha",
+  "Países do mundo",
+  "Cidades do Brasil com a letra V",
+  "Profissões com a letra A",
+  "Instrumentos musicais",
+  "Fenômenos da natureza",
+  "Elementos da Tabela Periódica",
+  "Peças de um carro",
+  "Termos da informática/tecnologia",
+  "Sentimentos ou estados emocionais",
+  "Itens de sala de aula",
+  "Itens do quarto",
+  "Cursos Superiores"
+];
+let themeDrawPool = [];
 
 // ── Helpers ───────────────────────────────────────────────
 function flash(el) {
@@ -31,22 +85,100 @@ function flash(el) {
   el.classList.add("flash");
 }
 
-function setActiveTeam(team) {
-  currentTeam = team;
-  const name = team === 1 ? displayTeam1.textContent : displayTeam2.textContent;
-  turnLabel.textContent = `VEZ DO ${name.toUpperCase()}`;
-  team1Card.classList.toggle("active", team === 1);
-  team2Card.classList.toggle("active", team === 2);
-  timerDisplay.classList.remove("danger");
+function aliveTeams() {
+  return teams.filter(team => team.lives > 0);
 }
 
-// ── Prepare turn (show Start button, pause) ───────────────
-function startTurn(team, requireManualStart = false) {
+function findNextAliveIndex(fromIndex) {
+  for (let i = 1; i <= TEAM_COUNT; i++) {
+    const idx = (fromIndex + i) % TEAM_COUNT;
+    if (teams[idx].lives > 0) return idx;
+  }
+  return -1;
+}
+
+function renderTeams() {
+  teams.forEach((team, i) => {
+    teamNameEls[i].textContent = team.name;
+    teamLivesEls[i].textContent = `Vidas: ${team.lives}`;
+    teamCards[i].classList.toggle("eliminated", team.lives <= 0);
+    teamCards[i].classList.remove("active");
+    // apply team color
+    Object.values(TEAM_COLORS).forEach(c => teamCards[i].classList.remove(c));
+    const colorClass = getTeamColorClass(team.name);
+    if (colorClass) teamCards[i].classList.add(colorClass);
+  });
+}
+
+function setActiveTeam(index) {
+  currentTeamIndex = index;
+  const team = teams[index];
+  turnLabel.textContent = `VEZ DO ${team.name.toUpperCase()}`;
+  teamCards.forEach(card => card.classList.remove("active"));
+  teamCards[index].classList.add("active");
+  timerDisplay.classList.remove("danger");
+
+  // Update body background to match active team color
+  Object.values(TEAM_COLORS).forEach(c => document.body.classList.remove(`bg-${c}`));
+  const colorClass = getTeamColorClass(team.name);
+  if (colorClass) document.body.classList.add(`bg-${colorClass}`);
+}
+
+function normalizeTheme(value) {
+  return value.trim().replace(/\s+/g, " ");
+}
+
+function renderThemes() {
+  themesCount.textContent = `Temas cadastrados: ${themes.length}`;
+  themesPreview.innerHTML = "";
+
+  themes.forEach(theme => {
+    const item = document.createElement("span");
+    item.className = "theme-chip";
+    item.textContent = theme;
+    themesPreview.appendChild(item);
+  });
+}
+
+function addTheme() {
+  const value = normalizeTheme(themeAddInput.value);
+  if (!value) return;
+
+  const exists = themes.some(theme => theme.toLowerCase() === value.toLowerCase());
+  if (!exists) {
+    themes.push(value);
+    renderThemes();
+  }
+
+  themeAddInput.value = "";
+  themeAddInput.focus();
+}
+
+function clearThemes() {
+  themes = [];
+  themeDrawPool = [];
+  renderThemes();
+}
+
+function drawTheme() {
+  if (themes.length === 0) return null;
+
+  if (themeDrawPool.length === 0) {
+    themeDrawPool = [...themes];
+  }
+
+  const index = Math.floor(Math.random() * themeDrawPool.length);
+  const [selected] = themeDrawPool.splice(index, 1);
+  return selected;
+}
+
+// ── Turn control ──────────────────────────────────────────
+function startTurn(index, requireManualStart = false) {
   clearInterval(interval);
-  seconds = 10;
+  seconds = TURN_SECONDS;
   timerDisplay.textContent = seconds;
   timerDisplay.classList.remove("danger");
-  setActiveTeam(team);
+  setActiveTeam(index);
 
   if (requireManualStart) {
     centerBtn.disabled = true;
@@ -55,17 +187,19 @@ function startTurn(team, requireManualStart = false) {
     return;
   }
 
+  waitingToStart = true;
   beginCountdown();
 }
 
-// ── Begin countdown after Start is pressed ────────────────
 function beginCountdown() {
+  if (!waitingToStart) return;
+
   waitingToStart = false;
   startRoundBtn.classList.add("hidden");
   centerBtn.disabled = false;
 
   interval = setInterval(() => {
-    seconds--;
+    seconds -= 1;
     timerDisplay.textContent = seconds;
 
     if (seconds <= 3) timerDisplay.classList.add("danger");
@@ -73,20 +207,31 @@ function beginCountdown() {
     if (seconds <= 0) {
       clearInterval(interval);
       centerBtn.disabled = true;
-      teamLoses(currentTeam);
+      handleTimeout();
     }
   }, 1000);
 }
 
-// ── Win / Lose ────────────────────────────────────────────
-function teamLoses(losingTeam) {
-  const loserName  = losingTeam === 1 ? displayTeam1.textContent : displayTeam2.textContent;
-  const winnerName = losingTeam === 1 ? displayTeam2.textContent : displayTeam1.textContent;
-  showResult(`🏆 ${winnerName} VENCEU!`, `${loserName} não passou a batata a tempo!`);
+function handleTimeout() {
+  const team = teams[currentTeamIndex];
+  team.lives -= 1;
+  flash(teamCards[currentTeamIndex]);
+
+  renderTeams();
+
+  const alive = aliveTeams();
+  if (alive.length === 1) {
+    showResult(`🏆 ${alive[0].name} VENCEU!`, "Último time com vidas restantes.");
+    return;
+  }
+
+  const next = findNextAliveIndex(currentTeamIndex);
+  if (next >= 0) startTurn(next, false);
 }
 
 function showResult(title, sub) {
-  document.getElementById("result-title").textContent = title;
+  clearInterval(interval);
+  resultTitle.textContent = title;
   resultMsg.textContent = sub;
   gameScreen.classList.add("hidden");
   resultOverlay.classList.remove("hidden");
@@ -94,52 +239,65 @@ function showResult(title, sub) {
   setTimeout(() => {
     resultOverlay.classList.add("hidden");
     setupScreen.classList.remove("hidden");
-    temaInput.value = "";
-    team1Input.value = "";
-    team2Input.value = "";
-  }, 3500);
+    teamInputs.forEach(input => {
+      input.value = "";
+    });
+  }, 4000);
 }
 
-// ── Setup: start game ─────────────────────────────────────
+// ── Start game ────────────────────────────────────────────
 startGameBtn.addEventListener("click", () => {
-  const name1 = team1Input.value.trim() || "Time 1";
-  const name2 = team2Input.value.trim() || "Time 2";
-  const tema  = temaInput.value.trim();
+  const selectedTheme = drawTheme();
 
-  displayTeam1.textContent = name1;
-  displayTeam2.textContent = name2;
-
-  if (tema) {
-    displayTema.textContent = tema;
-    temaBanner.classList.remove("hidden");
-  } else {
-    temaBanner.classList.add("hidden");
+  if (!selectedTheme) {
+    alert("Cadastre pelo menos 1 tema para iniciar o jogo.");
+    themeAddInput.focus();
+    return;
   }
+
+  teams = Array.from({ length: TEAM_COUNT }, (_, i) => ({
+    id: i + 1,
+    name: teamInputs[i].value.trim() || DEFAULT_TEAM_NAMES[i] || `Time ${i + 1}`,
+    lives: INITIAL_LIVES
+  }));
+
+  renderTeams();
+
+  displayTema.textContent = selectedTheme;
+  temaBanner.classList.remove("hidden");
 
   setupScreen.classList.add("hidden");
   gameScreen.classList.remove("hidden");
 
-  startTurn(1, true);
+  startTurn(0, true);
 });
 
-// ── Start Round button ────────────────────────────────────
+// ── Buttons ───────────────────────────────────────────────
 startRoundBtn.addEventListener("click", () => {
   beginCountdown();
 });
 
-// ── Center button ─────────────────────────────────────────
 centerBtn.addEventListener("click", () => {
   flash(centerBtn);
-
-  const next = currentTeam === 1 ? 2 : 1;
-  startTurn(next, false);
+  const next = findNextAliveIndex(currentTeamIndex);
+  if (next >= 0) startTurn(next, false);
 });
 
+addThemeBtn.addEventListener("click", addTheme);
+clearThemesBtn.addEventListener("click", clearThemes);
+
 // ── Keyboard shortcuts ────────────────────────────────────
-[team1Input, team2Input, temaInput].forEach(input => {
+[...teamInputs].forEach(input => {
   input.addEventListener("keydown", e => {
     if (e.key === "Enter") startGameBtn.click();
   });
+});
+
+themeAddInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    addTheme();
+  }
 });
 
 document.addEventListener("keydown", e => {
@@ -152,5 +310,7 @@ document.addEventListener("keydown", e => {
     }
   }
 });
+
+renderThemes();
 
 
