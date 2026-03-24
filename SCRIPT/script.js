@@ -113,7 +113,7 @@ function renderTeams() {
 function setActiveTeam(index) {
   currentTeamIndex = index;
   const team = teams[index];
-  turnLabel.textContent = `VEZ DO ${team.name.toUpperCase()}`;
+  turnLabel.textContent = `VEZ DE ${team.name.toUpperCase()}`;
   teamCards.forEach(card => card.classList.remove("active"));
   teamCards[index].classList.add("active");
   timerDisplay.classList.remove("danger");
